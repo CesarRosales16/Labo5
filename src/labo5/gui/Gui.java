@@ -3,12 +3,16 @@ package labo5.gui;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 import labo5.VerificadorMeta;
 import labo5.hilos.AnimalThread;
+import labo5.hilos.HoraThread;
 
 /**
  *
@@ -17,27 +21,37 @@ import labo5.hilos.AnimalThread;
 public class Gui extends JFrame {
 
     private JLabel[] labels;
+    public JTextField reloj;
     private JButton inicio;
     private JButton reiniciar;
     private String[] nombres = {"canguro", "tortuga", "dragon"};
 
     public Gui() {
-        
+
         super("Carrera de animales");
         initialComponents();
-        
+
         VerificadorMeta ver = VerificadorMeta.getInstance();
     }
 
     private void initialComponents() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
-
+//
+        reloj = new JTextField();
+        reloj.setBounds(550, 550, 120, 30);
+        HoraThread hora = new HoraThread();
+        hora.start();
+        reloj.setText(Integer.toString(hora.getHora())+" : "+Integer.toString(hora.getMinutos())+" : "+Integer.toString(hora.getSegundos()));
+        //reloj.setBounds(10, 100, 120, 30);
+//
         labels = new JLabel[3];
         inicio = new JButton("Inicio");
         reiniciar = new JButton("Reiniciar");
         Container container = getContentPane();
-
+//        
+        container.add(reloj);
+//        
         for (int i = 0; i < 3; i++) {
             labels[i] = new JLabel();
             labels[i].setIcon(new ImageIcon(getClass().getResource(nombres[i] + ".gif")));
@@ -50,7 +64,7 @@ public class Gui extends JFrame {
         reiniciar.setBounds(500, 0, 100, 30);
         container.add(reiniciar);
         //no muetra el boton reiniciar
-        //this.reiniciar.setVisible(false);
+        this.reiniciar.setVisible(false);
         inicio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -78,6 +92,10 @@ public class Gui extends JFrame {
         setSize(700, 650);
     }
 
+    public int getLocations(int num) {
+        return labels[num].getY();
+    }
+
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -85,5 +103,13 @@ public class Gui extends JFrame {
                 new Gui().setVisible(true);
             }
         });
+    }
+
+    public JButton getInicio() {
+        return inicio;
+    }
+
+    public JButton getReiniciar() {
+        return reiniciar;
     }
 }
